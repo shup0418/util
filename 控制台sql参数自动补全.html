@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>控制台sql参数自动补全</title>
+</head>
+<script type="text/javascript">
+    function autoComple()
+    {
+        var sql = document.getElementById("sql").value;
+        var parStr = document.getElementById("par").value;
+        parStr = parStr.replace("[","").replace("]","");
+        if(typeof(sql) == "undefined" || typeof(parStr) == "undefined" || sql == "" || parStr == "")
+        {
+            alert("请填写必要参数!!!");
+            return;
+        }
+        var pars= new Array();
+        pars = parStr.split(",")
+        
+        for(var i = 0; i < pars.length; i++)
+        {
+            sql = sql.replace("?", "'" + pars[i].trim() + "'")
+        }
+        
+        document.getElementById("result").value = sql
+        copyText(sql);
+    }
+    function copyText(txt) {
+        if (window.clipboardData) {
+            window.clipboardData.clearData();
+            window.clipboardData.setData("Text", txt);
+            alert("已经成功复制到剪帖板上！");
+        } else if (navigator.userAgent.indexOf("Opera") != -1) {
+            window.location = txt;
+        } else if (window.netscape) {
+            try {
+                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+            } catch(e) {
+                alert("被浏览器拒绝！\n请在浏览器地址栏输入'about:config'并回车\n然后将'signed.applets.codebase_principal_support'设置为'true'");
+            }
+            var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
+            if (!clip) return;
+            var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
+            if (!trans) return;
+            trans.addDataFlavor('text/unicode');
+            var str = new Object();
+            var len = new Object();
+            var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
+            var copytext = txt;
+            str.data = copytext;
+            trans.setTransferData("text/unicode", str, copytext.length * 2);
+            var clipid = Components.interfaces.nsIClipboard;
+            if (!clip) return false;
+            clip.setData(trans, null, clipid.kGlobalClipboard);
+            alert("已经成功复制到剪帖板上！");
+        }
+    }
+    function clears()
+    {
+        document.getElementById("sql").value = "";
+        document.getElementById("par").value = "";
+        document.getElementById("result").value = "";
+    }
+</script>
+<body>
+    <table>
+        <tr>
+            <td>sql文*:</td>
+            <td><textarea id="sql" style="width:600px;height:100px;"></textarea></td>
+        </tr>
+        <tr>
+            <td>参数*:</td>
+            <td><textarea id="par" style="width:600px;height:100px;"></textarea></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <button onclick="autoComple()">补全</button>
+                <button onclick="clears()">清除</button>
+            </td>
+        </tr>
+        <tr>
+            <td>结果:</td>
+            <td><textarea id="result" style="width:600px;height:100px;"></textarea></td>
+        </tr>
+    </table>
+</body>
+</html>

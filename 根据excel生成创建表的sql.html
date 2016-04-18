@@ -1,0 +1,83 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> New Document </title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <script type="text/javascript">
+        function ReadExcel() {
+           var tempStr = "";
+           //得到文件路径的值
+           var filePath = document.getElementById("upfile").value;
+           //创建操作EXCEL应用程序的实例
+           var oXL = new ActiveXObject("Excel.application");
+            //打开指定路径的excel文件
+           var oWB = oXL.Workbooks.open(filePath);
+           //操作第一个sheet(从一开始，而非零)
+           oWB.worksheets(2).select();
+           var oSheet = oWB.ActiveSheet;
+           tempStr = "CREATE TABLE '" + oSheet.Cells(3, 2).value.substring(1,oSheet.Cells(3, 2).value.length) + "' (";
+           //使用的行数
+           var rows =  oSheet .usedrange.rows.count; 
+           try {
+              for (var i = 7; i <= rows; i++) {
+                 if (typeof(oSheet.Cells(i, 3).value) == "undefined") break;
+                 //var a = oSheet.Cells(i, 2).value.toString() == "undefined" ? "": oSheet.Cells(i, 2).value;
+                 tempStr += "'" + oSheet.Cells(i, 3).value + "' " + oSheet.Cells(i, 4).value;
+                 if(oSheet.Cells(i, 4).value == "VARCHAR")
+                 {
+                	 tempStr += "(" + oSheet.Cells(i, 5).value + ")";
+                 }
+                 tempStr += " COLLATE utf8_general_ci";
+                 if(oSheet.Cells(i, 6).value.toUpperCase() == "Y")
+                 {
+                	 tempStr += " NULL";
+                 } else 
+                 {
+                	 tempStr += " NOT NULL";
+                 }
+                 var aaaa = typeof(oSheet.Cells(i, 8).value);
+                 if(typeof(oSheet.Cells(i, 2).value) != "undefined")
+                 {
+                     if(typeof(oSheet.Cells(i, 8).value) != "undefined")
+                     {
+                    	 tempStr += " COMMENT '" + oSheet.Cells(i, 2).value + ";" + oSheet.Cells(i, 8).value + "',";
+                     }else
+                     {
+                    	 tempStr += " COMMENT '" + oSheet.Cells(i, 2).value + "',";
+                     }
+                 }
+                 tempStr += "\n";
+                 //tempStr += (" " + oSheet.Cells(i, 2).value + " " + oSheet.Cells(i, 3).value + " " + oSheet.Cells(i, 4).value + " " + oSheet.Cells(i, 5).value + " " + oSheet.Cells(i, 6).value + "\n");
+              }
+              tempStr += " PRIMARY KEY (`BROADCAST_KIND_ID`) USING BTREE ) ENGINE=InnoDB CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' COMMENT='";
+              tempStr += oSheet.Cells(2, 2).value + "\\r\\n";
+              if(typeof(oSheet.Cells(4, 2).value) != "undefined")
+              {
+             	 tempStr += oSheet.Cells(4, 2).value + "\\r\\n";
+              }
+              if(typeof(oSheet.Cells(5, 2).value) != "undefined")
+              {
+             	 tempStr += oSheet.Cells(5, 2).value;
+              }
+              tempStr += "';"
+           } catch(e) {
+              document.getElementById("txtArea").value = tempStr;
+           }
+           document.getElementById("txtArea").value = tempStr;
+           //退出操作excel的实例对象
+           oXL.Application.Quit();
+            //手动调用垃圾收集器
+           CollectGarbage();
+        }
+  </script>
+ </head>
+
+ <body>
+  <input type="file" id="upfile" /><input type="button" onclick="ReadExcel();" value="read">
+<br>
+<textarea id="txtArea" cols=150 rows=100></textarea>
+ </body>
+</html>
