@@ -21,11 +21,8 @@ def get_msg(user,passwd):
         p.user(mail_user)
         p.pass_(mail_pass)
         p.stat()
-        # print('Messages: %s. Size: %s' % p.stat())
         # list()返回所有邮件的编号:
         resp, mails, octets = p.list()
-        # 可以查看返回的列表类似['1 82923', '2 2184', ...]
-        # print(mails)
         # 获取最新一封邮件, 注意索引号从1开始:
         index = len(mails)
         resp, lines, octets = p.retr(index)
@@ -34,8 +31,6 @@ def get_msg(user,passwd):
         msg_content = '\r\n'.join(lines)
         # 稍后解析出邮件:
         msg = Parser().parsestr(msg_content)
-        # 可以根据邮件索引号直接从服务器删除邮件:
-        # server.dele(index)
         # 关闭连接:
         p.quit()
         #解析打印邮件内容
