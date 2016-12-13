@@ -40,7 +40,7 @@ def get_msg(user,passwd):
         sys.exit(1)
 
 
-# 取得邮件标题信息
+# 取得邮件参数信息
 def get_mail_content(msg,type,indent=0):
     if indent == 0:
         # 邮件的From, To, Subject存在于根对象上:
